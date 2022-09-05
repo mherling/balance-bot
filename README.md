@@ -4,7 +4,7 @@ This is an environment for [OpenAI Gym](https://github.com/openai/gym) where the
 
 To install this environment:
 
-    git clone https://github.com/yconst/balance-bot
+    git clone https://github.com/mherling/balance-bot
     cd balance-bot
     pip install -e .
     
