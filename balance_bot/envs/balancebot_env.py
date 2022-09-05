@@ -12,7 +12,7 @@ import pybullet_data
 class BalancebotEnv(gym.Env):
     metadata = {
         'render.modes': ['human', 'rgb_array'],
-        'video.frames_per_second' : 50
+        'video.frames_per_second': 50
     }
 
     def __init__(self, render=False):
@@ -76,13 +76,13 @@ class BalancebotEnv(gym.Env):
         vt = clamp(self.vt + deltav, -self.maxV, self.maxV)
         self.vt = vt
 
-        p.setJointMotorControl2(bodyUniqueId=self.botId, 
-                                jointIndex=0, 
-                                controlMode=p.VELOCITY_CONTROL, 
+        p.setJointMotorControl2(bodyUniqueId=self.botId,
+                                jointIndex=0,
+                                controlMode=p.VELOCITY_CONTROL,
                                 targetVelocity=vt)
-        p.setJointMotorControl2(bodyUniqueId=self.botId, 
-                                jointIndex=1, 
-                                controlMode=p.VELOCITY_CONTROL, 
+        p.setJointMotorControl2(bodyUniqueId=self.botId,
+                                jointIndex=1,
+                                controlMode=p.VELOCITY_CONTROL,
                                 targetVelocity=-vt)
 
     def _compute_observation(self):
@@ -92,11 +92,13 @@ class BalancebotEnv(gym.Env):
         return [cubeEuler[0],angular[0],self.vt]
 
     def _compute_reward(self):
-        return 0.1 - abs(self.vt - self.vd) * 0.005
+        cubePos, _ = p.getBasePositionAndOrientation(self.botId)
+        return 0.2 - abs(self.vt - self.vd) * 0.005 - min(abs(cubePos[1]) * 0.1, 0.1)
 
     def _compute_done(self):
         cubePos, _ = p.getBasePositionAndOrientation(self.botId)
-        return cubePos[2] < 0.15 or self._envStepCounter >= 1500
+
+        return cubePos[2] < 0.15 or self._envStepCounter >= 1500 or abs(cubePos[1]) > 2.
 
     def _render(self, mode='human', close=False):
         pass
